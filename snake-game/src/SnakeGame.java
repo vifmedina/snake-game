@@ -1,11 +1,14 @@
-import javax.swing.*;  // Importa as classes necessárias para criar a interface gráfica do jogo
-import java.awt.*;  // Importa as classes necessárias para manipular gráficos e cores
-import java.awt.event.*;  // Importa as classes necessárias para lidar com eventos de teclado e tempo
-import java.util.LinkedList;  // Importa a classe LinkedList para armazenar os pontos da cobra
-import java.util.Random;  // Importa a classe Random para gerar posições aleatórias para a comida
+import java.awt.*;  // Importa as classes necessárias para criar a interface gráfica do jogo
+import java.awt.event.*;  // Importa as classes necessárias para manipular gráficos e cores
+import java.util.LinkedList;  // Importa as classes necessárias para lidar com eventos de teclado e tempo
+import java.util.Random;  // Importa a classe LinkedList para armazenar os pontos da cobra
+import javax.swing.*;  // Importa a classe Random para gerar posições aleatórias para a comida
 
 public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     // A classe SnakeGame herda de JPanel para desenhar o jogo na tela e implementa ActionListener e KeyListener
+
+    private int[] score;  // Vetor para armazenar os pontos
+    
     
     private static final int TILE_SIZE = 20;  // Tamanho de cada "tile" (bloco) da cobra e da comida
     private static final int WIDTH = 400;  // Largura do painel do jogo
@@ -27,6 +30,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         this.direction = 'R';  // A cobra começa indo para a direita
         this.gameOver = false;  // Inicialmente, o jogo não acabou
         this.timer = new Timer(100, this);  // Cria um timer que chama a ação a cada 100 milissegundos
+        this.score = new int[1]; //Inicializa o vetor de pontos com tamanho 1
         initGame();  // Inicializa o jogo
     }
 
@@ -36,6 +40,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
             snake.add(new Point(i, 0));  // Adiciona os pontos iniciais da cobra na posição (i, 0) (topo da tela)
         }
         spawnFood();  // Cria a comida em uma posição aleatória
+        score[0] = 0; //Zera os pontos ao iniciar o jogo
         timer.start();  // Inicia o timer que vai mover a cobra
     }
 
@@ -71,6 +76,8 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
             g.setColor(Color.RED);  // Define a cor do texto como vermelho
             g.setFont(new Font("Arial", Font.BOLD, 30));  // Define a fonte do texto
             g.drawString("Game Over", WIDTH / 3, HEIGHT / 2);  // Desenha a mensagem no centro da tela
+            g.setFont(new Font("Arial", Font.PLAIN, 20));
+            g.drawString("Score: " + score[0], WIDTH / 3, HEIGHT / 2 + 30);  // Mostra a pontuação final
         } else {
             // Desenha a cobra
             for (int i = 0; i < snake.size(); i++) {
@@ -89,6 +96,10 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
             // Desenha a comida
             g.setColor(new Color(255, 99, 71));  // Cor vermelha para a maçã
             g.fillOval(food.x * TILE_SIZE, food.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);  // Desenha a comida como um círculo
+
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 14));
+            g.drawString("Score: " + score[0], 10, 20);  // Mostra a pontuação no canto superior esquerdo
         }
     }
 
@@ -119,6 +130,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         // Se a cobra comeu a comida, a comida é reposicionada
         if (newHead.equals(food)) {
             spawnFood();  // Coloca a comida em uma nova posição
+            score[0] += 10;  // Incrementa os pontos ao comer a comida
         } else {
             snake.removeLast();  // Se não comeu, remove a última parte da cobra (a cauda)
         }
